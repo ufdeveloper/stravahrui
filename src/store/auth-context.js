@@ -62,6 +62,7 @@ export const AuthContextProvider = (props) => {
     setToken(token);
     localStorage.setItem('token', token);
     localStorage.setItem('expirationTime', expirationTime);
+    localStorage.setItem('connectedToStrava', "true");
 
     const remainingTime = calculateRemainingTime(expirationTime);
 

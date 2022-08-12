@@ -1,5 +1,5 @@
 import qs from 'qs';
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import AuthContext from '../../store/auth-context';
 
@@ -50,12 +50,6 @@ const OauthCallback = () => {
                 alert(err.message);
             });
     }, []);
-
-    return (
-        <div>
-            <h1>Callback Page</h1>
-        </div>
-    );
 };
 
 export default OauthCallback;
