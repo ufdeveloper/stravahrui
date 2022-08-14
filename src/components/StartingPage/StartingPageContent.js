@@ -1,6 +1,6 @@
 import "react-datepicker/dist/react-datepicker.css";
 import React, { useEffect, useState } from 'react';
-import { Header, Message,Button } from 'semantic-ui-react';
+import {Header, Message, Button, Checkbox} from 'semantic-ui-react';
 import { LineChart, Line, Tooltip, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
 import DatePicker from "react-datepicker";
 
@@ -12,6 +12,10 @@ const StartingPageContent = () => {
     const [endDate, setEndDate] = useState(new Date());
     const [isConnectedToStrava, setIsConnectedToStrava] = useState(false);
     const [isAuthorizedToStrava, setIsAuthorizedToStrava] = useState(false);
+    const [isHrCheckboxSelected, setIsHrCheckboxSelected] = useState(true);
+    const [isPaceCheckboxSelected, setIsPaceCheckboxSelected] = useState(true);
+    const [isElevCheckboxSelected, setIsElevCheckboxSelected] = useState(true);
+    const [isWeightCheckboxSelected, setIsWeightCheckboxSelected] = useState(true);
 
     const startDatePicker = <DatePicker selected={startDate} onChange={(date) => {
         setStartDate(date);
@@ -29,13 +33,24 @@ const StartingPageContent = () => {
 
     const domain = ['auto', 'auto'];
 
+    const checkBoxes = <div>
+    <Checkbox key={'hr'} label={'Heart Rate'} checked={isHrCheckboxSelected}
+              onChange={(e, data) => setIsHrCheckboxSelected(data.checked)}/>
+    <Checkbox key={'pace'} label={'Avg. Pace'} checked={isPaceCheckboxSelected}
+              onChange={(e, data) => setIsPaceCheckboxSelected(data.checked)} />
+    <Checkbox key={'elevgain'} label={'Elevation Gain'} checked={isElevCheckboxSelected}
+              onChange={(e, data) => setIsElevCheckboxSelected(data.checked)} />
+    <Checkbox key={'weight'} label={'Weight'} checked={isWeightCheckboxSelected}
+              onChange={(e, data) => setIsWeightCheckboxSelected(data.checked)} />
+    </div>
+
     const renderLineChart = (
         // <ResponsiveContainer width="50%" height="50%">
             <LineChart width={800} height={600} data={activities}>
-                <Line type="monotone" dataKey="heartRate" stroke="#8884d8" />
-                <Line type="monotone" dataKey="weight" stroke="#ff000f" />
-                <Line type="monotone" dataKey="elevationGain" stroke="#204b71" />
-                <Line type="monotone" dataKey="averageSpeed" stroke="#584194" />
+                <Line type="monotone" dataKey="heartRate" hide={!isHrCheckboxSelected} dot={false} stroke="#ff000f" />
+                <Line type="monotone" dataKey="weight" hide={!isWeightCheckboxSelected} dot={false} stroke="#8884d8" />
+                <Line type="monotone" dataKey="elevationGain" hide={!isElevCheckboxSelected} dot={false} stroke="#204b71" />
+                <Line type="monotone" dataKey="averageSpeed" hide={!isPaceCheckboxSelected} dot={false} stroke="#584194" />
                 <CartesianGrid stroke="#ccc" />
                 <XAxis dataKey="startDateLocal" reversed="true"/>
                 <YAxis domain={domain} />
@@ -46,10 +61,14 @@ const StartingPageContent = () => {
     );
 
     const navigateToStravaAuth = () => {
-        let url = 'https://www.strava.com/oauth/authorize?client_id=54157&response_type=code&redirect_uri=http://localhost:3000/oauth/callback&approval_prompt=auto&scope=read,read_all,profile:read_all,activity:read,activity:read_all&state=private';
+        let url = 'https://www.strava.com/oauth/authorize?client_id=54157&response_type=code&redirect_uri=http://stravahr.com:3000/oauth/callback&approval_prompt=auto&scope=read,read_all,profile:read_all,activity:read,activity:read_all&state=private';
         console.log('authorizing to Strava, redirecting to url=' + url);
         window.location.assign(url);
     };
+
+    const handleCheckboxChange = data => {
+        console.log("data = " + data);
+    }
 
     useEffect(() => {
         // token expired, authorize again
@@ -69,7 +88,8 @@ const StartingPageContent = () => {
 
             // Fetch activities
             console.log("fromDate=" + startDate.toISOString() + ", toDate=" + endDate.toISOString());
-            fetch('http://localhost:8080/api/v1/activities' +
+            // fetch('http://localhost:8080/api/v1/activities' +
+            fetch('http://api.stravahr.com:8080/api/v1/activities' +
                 '?fromDate=' + startDate.toISOString() +
                 '&toDate=' + endDate.toISOString() +
                 '&activityType=Run', {
@@ -120,6 +140,8 @@ const StartingPageContent = () => {
           {!activities && !activitiesFetchFailed && isAuthorizedToStrava && <p>Charting your activity data..</p>}
 
           {activities && datePicker}
+
+          {activities && checkBoxes}
 
           {activities && renderLineChart}
       </div>

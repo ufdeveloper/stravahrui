@@ -15,7 +15,8 @@ const OauthCallback = () => {
         console.log('code = ' + code);
 
         // Fetch token from backend
-        fetch('http://localhost:8080/api/v1/token', {
+        // fetch('http://localhost:8080/api/v1/token', {
+        fetch('http://api.stravahr.com:8080/api/v1/token', {
             method: 'POST',
             body: JSON.stringify({
                 code: code,
@@ -23,6 +24,7 @@ const OauthCallback = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include', // This is such a bitch!! ---> https://stackoverflow.com/a/39150167/2049279
         })
             .then((res) => {
                 if (res.ok) {
