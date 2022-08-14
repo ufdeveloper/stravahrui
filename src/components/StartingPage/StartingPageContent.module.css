@@ -1,8 +1,36 @@
 .starting {
+  width: 80%;
+  height: 600px;
   margin: 3rem auto;
   text-align: center;
 }
 
 .starting h1 {
   font-size: 5rem;
+}
+
+.gridContainerDateControlsParent {
+  margin-top: 1rem;
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-bottom: 1rem;
+}
+
+.gridContainerDateControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.gridContainerLineControlsParent {
+  margin-top: 1rem;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-bottom: 1rem;
+}
+
+.gridContainerLineControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
 }

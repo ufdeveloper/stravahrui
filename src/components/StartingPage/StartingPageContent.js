@@ -1,7 +1,8 @@
 import "react-datepicker/dist/react-datepicker.css";
+import classes from './StartingPageContent.module.css';
 import React, { useEffect, useState } from 'react';
-import {Header, Message, Button, Checkbox} from 'semantic-ui-react';
-import { LineChart, Line, Tooltip, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
+import {Header, Message, Button, Checkbox, Grid, Segment} from 'semantic-ui-react';
+import {LineChart, Line, Tooltip, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer} from 'recharts';
 import DatePicker from "react-datepicker";
 
 const StartingPageContent = () => {
@@ -26,38 +27,55 @@ const StartingPageContent = () => {
         console.log('endDate=' + date);
     }} />
 
-    const datePicker = <div>
-        Start Date {activities && startDatePicker}
-        End Date {activities && endDatePicker}
-    </div>
+    const datePicker =
+        <div className={classes.gridContainerDateControlsParent}>
+            <div className={classes.gridContainerDateControls}>
+                <div className={classes.gridChild}>
+                    <section>Start Date {activities && startDatePicker}</section>
+                </div>
+                <div className={classes.gridChild}>
+                    <section>End Date {activities && endDatePicker}</section>
+                </div>
+            </div>
+        </div>
+
+    const checkBoxes =
+        <div className={classes.gridContainerLineControlsParent}>
+            <div className={classes.gridContainerLineControls}>
+                <div className={classes.gridChild}>
+                    <Checkbox key={'hr'} label={'Heart Rate'} checked={isHrCheckboxSelected}
+                          onChange={(e, data) => setIsHrCheckboxSelected(data.checked)}/>
+                </div>
+                <div className={classes.gridChild}>
+                    <Checkbox key={'pace'} label={'Avg. Pace'} checked={isPaceCheckboxSelected}
+                          onChange={(e, data) => setIsPaceCheckboxSelected(data.checked)} />
+                </div>
+                <div className={classes.gridChild}>
+                    <Checkbox key={'elevgain'} label={'Elevation Gain'} checked={isElevCheckboxSelected}
+                          onChange={(e, data) => setIsElevCheckboxSelected(data.checked)} />
+                </div>
+                <div className={classes.gridChild}>
+                    <Checkbox key={'weight'} label={'Weight'} checked={isWeightCheckboxSelected}
+                          onChange={(e, data) => setIsWeightCheckboxSelected(data.checked)} />
+                </div>
+            </div>
+        </div>
 
     const domain = ['auto', 'auto'];
-
-    const checkBoxes = <div>
-    <Checkbox key={'hr'} label={'Heart Rate'} checked={isHrCheckboxSelected}
-              onChange={(e, data) => setIsHrCheckboxSelected(data.checked)}/>
-    <Checkbox key={'pace'} label={'Avg. Pace'} checked={isPaceCheckboxSelected}
-              onChange={(e, data) => setIsPaceCheckboxSelected(data.checked)} />
-    <Checkbox key={'elevgain'} label={'Elevation Gain'} checked={isElevCheckboxSelected}
-              onChange={(e, data) => setIsElevCheckboxSelected(data.checked)} />
-    <Checkbox key={'weight'} label={'Weight'} checked={isWeightCheckboxSelected}
-              onChange={(e, data) => setIsWeightCheckboxSelected(data.checked)} />
-    </div>
-
     const renderLineChart = (
-        // <ResponsiveContainer width="50%" height="50%">
-            <LineChart width={800} height={600} data={activities}>
-                <Line type="monotone" dataKey="heartRate" hide={!isHrCheckboxSelected} dot={false} stroke="#ff000f" />
+        <ResponsiveContainer width="99%" height="100%">
+            <LineChart /*width={800} height={600}*/ data={activities}>
+                <Line type="monotone" name="HR" dataKey="heartRate" hide={!isHrCheckboxSelected} dot={false} stroke="#ff000f" />
                 <Line type="monotone" dataKey="weight" hide={!isWeightCheckboxSelected} dot={false} stroke="#8884d8" />
-                <Line type="monotone" dataKey="elevationGain" hide={!isElevCheckboxSelected} dot={false} stroke="#204b71" />
-                <Line type="monotone" dataKey="averageSpeed" hide={!isPaceCheckboxSelected} dot={false} stroke="#584194" />
+                <Line type="monotone" name="elev. gain" dataKey="elevationGain" hide={!isElevCheckboxSelected} dot={false} stroke="#204b71" />
+                <Line type="monotone" name="avg. pace" dataKey="averageSpeed" hide={!isPaceCheckboxSelected} dot={false} stroke="#584194" />
                 <CartesianGrid stroke="#ccc" />
-                <XAxis dataKey="startDateLocal" reversed="true"/>
+                <XAxis dataKey="startDateString" reversed="true"/>
                 <YAxis domain={domain} />
                 <Tooltip />
                 <Legend />
             </LineChart>
-        // </ResponsiveContainer>
+        </ResponsiveContainer>
     );
 
     const navigateToStravaAuth = () => {
@@ -130,8 +148,8 @@ const StartingPageContent = () => {
 
 
   return (
-      <div style={{align: 'center'}}>
-          <Header as="h1">My Activities</Header>
+      <div className={classes.starting}>
+          <Header as="h2">Trends</Header>
 
           {!isConnectedToStrava && <Button onClick={navigateToStravaAuth}>Connect To Strava</Button> }
 
